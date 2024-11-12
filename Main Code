@@ -1,0 +1,112 @@
+import tkinter as tk
+from tkinter import ttk
+import webbrowser
+from matplotlib import pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+
+# Global variables
+file_path = 'C:\\Users\\Admin\\Downloads\\googleplaystore.csv (1).zip'  # Update this path
+df = pd.read_csv(file_path)
+
+# Data analysis functions
+def perform_overall_analysis():
+    num_apps = len(df)
+    avg_rating = round(df['Rating'].mean(), 2)
+    num_categories = df['Category'].nunique()
+    
+    # Display analysis results
+    result_text.config(state=tk.NORMAL)
+    result_text.delete(1.0, tk.END)
+    result_text.insert(tk.END, f"Overall Data Analysis Results:\n")
+    result_text.insert(tk.END, f"Number of Apps: {num_apps}\n")
+    result_text.insert(tk.END, f"Average Rating: {avg_rating}\n")
+    result_text.insert(tk.END, f"Number of Categories: {num_categories}\n")
+    result_text.config(state=tk.DISABLED)
+
+def perform_category_analysis():
+    # Plotting
+    plt.style.use('ggplot')  # Use a modern and colorful style
+    plt.figure(figsize=(12, 8))
+    sns.countplot(data=df, y='Category', order=df['Category'].value_counts().index, palette='Set2')
+    plt.xlabel('Number of Apps', fontsize=14)
+    plt.ylabel('Category', fontsize=14)
+    plt.title('Distribution of Apps Across Different Categories', fontsize=16)
+    plt.tight_layout()
+    plt.show()
+
+def perform_ratings_analysis():
+    # Perform ratings analysis
+    plt.figure(figsize=(12, 8))
+    sns.histplot(df['Rating'], bins=20, kde=True)
+    plt.xlabel('Rating')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Ratings')
+    plt.show()
+
+def perform_installs_analysis():
+    # Perform installs analysis
+    plt.figure(figsize=(12, 8))
+    sns.histplot(df['Installs'], bins=20, kde=True)
+    plt.xlabel('Installs')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Installs')
+    plt.show()
+
+def perform_price_analysis():
+    # Perform price analysis
+    plt.figure(figsize=(12, 8))
+    sns.histplot(df['Price'], bins=20, kde=True)
+    plt.xlabel('Price ($)')
+    plt.ylabel('Frequency')
+    plt.title('Distribution of Prices')
+    plt.show()
+
+def open_play_store():
+    url = "https://play.google.com/store"
+    webbrowser.open_new(url)
+
+# Create GUI
+root = tk.Tk()
+root.title("Play Store App Analysis")
+root.configure(bg='#f0f0f0')  # Set background color
+
+# Create main frame
+main_frame = ttk.Frame(root, padding=20)
+main_frame.pack(expand=True, fill='both')
+
+# Add buttons frame
+buttons_frame = ttk.Frame(main_frame, padding=10)
+buttons_frame.grid(row=0, column=0, sticky='nsew')
+
+# Add buttons for different types of analysis
+overall_analysis_button = ttk.Button(buttons_frame, text="Overall Analysis", command=perform_overall_analysis)
+overall_analysis_button.grid(row=0, column=0, padx=5, pady=5, sticky='ew')
+
+category_analysis_button = ttk.Button(buttons_frame, text="Category Analysis", command=perform_category_analysis)
+category_analysis_button.grid(row=0, column=1, padx=5, pady=5, sticky='ew')
+
+ratings_analysis_button = ttk.Button(buttons_frame, text="Ratings Analysis", command=perform_ratings_analysis)
+ratings_analysis_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky='ew')
+
+# Add button to open Google Play Store
+play_store_button = ttk.Button(buttons_frame, text="Open Google Play Store", command=open_play_store)
+play_store_button.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky='ew')
+
+# Add text widget to display analysis results
+result_text = tk.Text(main_frame, height=10, width=50, state=tk.DISABLED, bg='#ffffff', relief=tk.SOLID)
+result_text.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+
+# Configure grid weights for responsiveness
+root.grid_columnconfigure(0, weight=1)
+root.grid_rowconfigure(1, weight=1)
+main_frame.grid_columnconfigure(0, weight=1)
+main_frame.grid_rowconfigure(1, weight=1)
+
+# Update style of buttons
+style = ttk.Style()
+style.configure('TButton', foreground='black', background='#ffcc00', font=('Helvetica', 12), padding=10)
+
+# Start GUI
+root.mainloop()
